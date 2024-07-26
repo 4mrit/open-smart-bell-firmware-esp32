@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    <meta charset='UTF-8'><title>Switch Scheduler</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        form{
+        display:inline;
+        }
+    </style>
+    </head>
+    <body>
+    <h1 style="margin:0px">
+        Switch Scheduler
+        <form style='display:inline' method='GET' action='/settings'>
+        <button type='submit'>⚙️ Settings</button>
+        </form>
+    </h1>
+    <i>( Expires on: &nbsp; %EXPIRY_DATE% )</i><br><br><br>
+    <table>
+        <tr>
+        <th>Start Time</th>
+        <th>Duration</th>
+        </tr>
+
+        %SCHEDULE_ROWS%
+
+    </table><br><br>
+    <form method='POST'>
+        Start Time: <input type='time' name='start_time'><br><br>
+        Duration : &nbsp&nbsp
+        <input type='number' name='duration_minutes' placeholder='min' min="0" max="1439" size="5" >
+        <input type='number' name='duration_seconds' placeholder='sec' min="0" max="59" size="5" >
+        <br><br>
+        <input type='submit' value='Save'>
+    </form>
+        &nbsp;&nbsp;&nbsp;
+    <form method='POST' action='/urgent-on'>
+        <button name="urgent-on" type='submit'>Urgent (%URGENT_TIME%s)</button>
+    </form><br><br>
+    <form method='POST' action='/delete-all-schedule'>
+        <button type='submit'>Delete All Schedules</button>
+    </form>
+    </body>
+</html>

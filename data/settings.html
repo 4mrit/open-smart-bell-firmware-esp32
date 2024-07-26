@@ -1,0 +1,85 @@
+<html>
+    <head>
+      <meta charset='UTF-8'>
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta http-equiv="Expires" content="0">
+      <title>⚙️ Settings</title>
+      <style>
+        form,h4 ,h1{
+          display:inline;
+        }
+        .red{color:red;}
+        .green{color:green;}
+      </style>
+    </head>
+  <body>
+    <h1>Configuration Page  </h1><br>
+
+    <form method='GET' action="/">
+      <button type="submit"> Home </button>
+    </form>
+
+    <form method='POST' action="/sync-server">
+      <button name="sync-server" type="submit"> Sync Server</button>
+    </form> 
+    
+    <form method='POST' action="/restart">
+      <button type="submit"> Restart </button>
+    </form>
+
+    <br><br><br>
+
+    <form  method='POST' action="/settings">
+      <h4> Time Syncronization :</h4> %CURRENT_TIME% <br><br>
+      <h4> Network </h4>( %WIFI_SSID% ): %WIFI_STATE% <br><br>
+      <h4> Serial No :</h4>  %MAC_ADDRESS% <br><br>
+      <h4> IP Address :</h4>  %IP[0]% . %IP[1]% . %IP[2]% .
+      <input disabled type="number" name="ip" min="10" max="250" value="%IP[3]%" style="width:4em"/>
+      <br/><br/><br>
+      <h3 id="cred_label" >Network Credentials (WiFi)</h3>
+      SSID  : <input name="ssid" style="margin-left: 25px"/><br/><br>
+      Password : <input name="password"/><br/><br/><br>
+      <button name="settings" type="submit">Save Changes</button>
+    </form>
+
+    <form method='POST' action='/sync-time'>
+      <button name="sync-time" type='submit'>Sync Time</button>
+    </form>
+
+    <form method='POST' action='/toogle-switch-state'>
+      <button name="toogle-switch-state" type='submit'>Toggle Switch State</button>
+    </form>
+    
+    <script>
+      function changeLabel(value) {
+        var label = document.getElementById('cred_label');
+        if (value === 'ap') {
+          label.innerHTML = 'Network Credentials (Hotspot)';
+          
+        } else {
+          label.innerHTML = 'Network Credentials (WiFi)';
+        }
+      }
+      
+      var clickCount = 0;
+      var clickTimeout;
+      document.body.addEventListener('click', handleClick);
+      document.body.addEventListener('touchstart', handleClick);
+
+      function handleClick(event) {
+          clickCount;
+
+          if (clickCount === 4) {
+              event.preventDefault(); 
+              alert("Made with ♡ by Amrit!!");
+              clickCount = 0; // Reset the click count
+          }
+
+          clickTimeout = setTimeout(function() {
+              clickCount = 0; // Reset the click count
+          }, 500);
+      }
+    </script>
+  </body>
+  </html>

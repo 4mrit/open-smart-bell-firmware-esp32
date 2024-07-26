@@ -1,0 +1,58 @@
+# PlatformIO specific files
+.pio/
+.pio
+.ccls
+.cache/
+.vscode/
+.clangd/
+.clangd_cache/
+piotest/
+platformio.ini.legacy_backup
+compile_commands.json
+# Build files
+build/
+
+# Library files
+lib_deps/
+
+# User-defined libraries
+
+# Arduino specific files
+*.elf
+*.bin
+*.hex
+*.eep
+
+# ESP specific files
+spiffs.bin
+spiffs.img
+littlefs.bin
+littlefs.img
+
+# Logs and databases
+*.log
+*.sqlite3
+
+# Backup files
+*.bak
+
+# Python specific files
+__pycache__/
+*.pyc
+*.pyo
+
+# MacOS specific files
+.DS_Store
+
+# Windows specific files
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# IDE specific files
+.idea/
+
