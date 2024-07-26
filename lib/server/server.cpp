@@ -9,7 +9,7 @@
 #include "../timing/timing.hpp"
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <LittleFS.h>
+#include <SPIFFS.h>
 
 AsyncWebServer server(80);
 String parseSettingsPage(const String &);
@@ -25,8 +25,10 @@ void startWebServer() {
     isActive = true;
     startWebServer_ACTIVE();
   } else {
-    isActive = false;
-    startWebServer_EXPIRED();
+    // isActive = false;
+    // startWebServer_EXPIRED();
+    isActive = true;
+    startWebServer_ACTIVE();
   }
 }
 
@@ -131,64 +133,62 @@ void startWebServer_EXPIRED() {
 
 void handleRoot_GET(AsyncWebServerRequest *request) {
   String filePath = "/root_active.html";
-  if (!LittleFS.exists(filePath)) {
+  if (!SPIFFS.exists(filePath)) {
     request->send(404, "text/html", "Page Not Found!!");
   }
-  request->send(LittleFS, filePath, String(), false, parseRootPage);
+  request->send(SPIFFS, filePath, String(), false, parseRootPage);
 }
 
 void handleExpiredRoot_GET(AsyncWebServerRequest *request) {
   String filePath = "/root_expired.html";
-  if (!LittleFS.exists(filePath)) {
+  if (!SPIFFS.exists(filePath)) {
     request->send(404, "text/html", "Page Not Found!!");
   }
-  request->send(LittleFS, filePath, String());
+  request->send(SPIFFS, filePath, String());
 }
 
 void handleRoot_POST(AsyncWebServerRequest *request) {
   Serial.println("handling / post request");
   TEST_schedules_variable_data();
+  String start_time = "";
   String start_time_hour = "";
   String start_time_min = "";
   String duration_minutes = "";
   String duration_seconds = "";
 
   for (int i = 0; i < MAX_SCHEDULES; i++) {
-
     if (!request->hasArg("start_time")) {
       break;
     }
-    // Serial.println(request->arg("plain"));
-    start_time_hour = request->arg("start_time").substring(0, 2);
-    start_time_min = request->arg("start_time").substring(3, 2);
+
+    start_time = request->arg("start_time");
+    duration_minutes = request->arg("duration_minutes");
+    duration_seconds = request->arg("duration_seconds");
 
     char timeCharArray[6]; // Allocate space for the C-style string
 
     // Copy the String to the character array
-    request->arg("start_time")
-        .toCharArray(timeCharArray, sizeof(timeCharArray));
+    start_time.toCharArray(timeCharArray, sizeof(timeCharArray));
 
-    String start_time_hour_s = strtok(timeCharArray, ":");
-    String start_time_min_s = strtok(NULL, ":");
+    String start_time_hour = strtok(timeCharArray, ":");
+    String start_time_min = strtok(NULL, ":");
 
-    Serial.printf("start_time_from_user : %s & %d", request->arg("start_time"));
+    Serial.printf("Raw Start Time from Request : %s", start_time);
 
-    duration_minutes = request->arg("duration_minutes");
-    duration_seconds = request->arg("duration_seconds");
-
-    Serial.printf(
-        "--------------------\nstart_time_hr :  %s\nstart_time_min : %s \n "
-        "duartion_min : %s \n duration_sec : %s \nschedule is del : %d \n",
-        start_time_hour, start_time_min, duration_minutes, duration_seconds,
-        schedules[i].isDeleted);
+    Serial.printf("\n\n--------------------\n"
+                  "start_time_hr : %s "
+                  "start_time_min : %s "
+                  "duartion_min : %s "
+                  "duration_sec : %s ",
+                  start_time_hour, start_time_min, duration_minutes,
+                  duration_seconds);
 
     if (start_time_hour != "" &&
         (duration_minutes != "" || duration_seconds != "") &&
         schedules[i].isDeleted) {
       Serial.printf("Writing Schedule to Index : %d\n", i);
-      schedules[i].start_time_hour = start_time_hour_s.toInt();
-      // schedules[i].start_time_min = start_time_min.toInt();
-      schedules[i].start_time_min = start_time_min_s.toInt();
+      schedules[i].start_time_hour = start_time_hour.toInt();
+      schedules[i].start_time_min = start_time_min.toInt();
       schedules[i].duration_minutes = duration_minutes.toInt();
       schedules[i].duration_seconds = duration_seconds.toInt();
       schedules[i].isDeleted = false;
@@ -214,10 +214,10 @@ void handleDeleteAllSchedule_POST(AsyncWebServerRequest *request) {
 
 void handleSettings_GET(AsyncWebServerRequest *request) {
   String filePath = "/settings.html";
-  if (!LittleFS.exists(filePath)) {
+  if (!SPIFFS.exists(filePath)) {
     request->send(404, "text/html", "Page Not Found!!");
   }
-  request->send(LittleFS, filePath, "text/html", false, parseSettingsPage);
+  request->send(SPIFFS, filePath, "text/html", false, parseSettingsPage);
 }
 
 void handleSettings_POST(AsyncWebServerRequest *request) {
@@ -239,24 +239,24 @@ void handleSettings_POST(AsyncWebServerRequest *request) {
 
   if (wifi_ssid != "") {
     if (network_mode == "ap") {
-      // ssid_AP = wifi_ssid;
-      // preferences.putString("ssid_AP",ssid_AP);
-      // Serial.printf("AP SSID set to : %s\n", ssid_AP);
+      ssid_AP = wifi_ssid;
+      preferences.putString("ssid_AP", ssid_AP);
+      Serial.printf("AP SSID set to : %s\n", ssid_AP);
     } else {
       ssid_STATION = wifi_ssid;
-      preferences.putString("ssid_STATION", ssid_STATION);
+      preferences.putString("ssid_STN", ssid_STATION);
       Serial.printf("STATION SSID set to : %s\n", ssid_STATION);
     }
   }
 
   if (wifi_password != "") {
     if (network_mode == "ap") {
-      password_AP = wifi_password;
-      preferences.putString("password_AP", password_AP);
-      Serial.printf("AP Password set to : %s\n", password_AP);
+      // password_AP = wifi_password;
+      // preferences.putString("password_AP", password_AP);
+      // Serial.printf("AP Password set to : %s\n", password_AP);
     } else {
       password_STATION = wifi_password;
-      preferences.putString("password_STATION", password_STATION);
+      preferences.putString("password_STN", password_STATION);
       Serial.printf("STATION Password set to : %s\n", password_STATION);
     }
   }
@@ -373,10 +373,9 @@ String parseRootPage(const String &var) {
 
   if (var == "EXPIRY_DATE") {
 
-    String expiry_date_year = String(preferences.getUShort("expiry_date_year"));
-    String expiry_date_month =
-        String(preferences.getUShort("expiry_date_month"));
-    String expiry_date_day = String(preferences.getUShort("expiry_date_day"));
+    String expiry_date_year = String(preferences.getUShort("exp_date_year"));
+    String expiry_date_month = String(preferences.getUShort("exp_date_month"));
+    String expiry_date_day = String(preferences.getUShort("exp_date_day"));
 
     return expiry_date_year + " / " + expiry_date_month + " / " +
            expiry_date_day;

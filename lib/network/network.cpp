@@ -3,11 +3,13 @@
 #include <WiFi.h>
 
 void establishNetwork(bool reconnect_WiFi) {
-  ssid_STATION = preferences.getString("ssid_STATION", ssid_STATION);
-  password_STATION =
-      preferences.getString("password_STATION", password_STATION);
-  ssid_AP = preferences.getString("ssid_AP", ssid_AP);
-  password_AP = preferences.getString("password_AP", password_AP);
+  ssid_STATION = preferences.getString("ssid_STN", ssid_STATION);
+  password_STATION = preferences.getString("password_STN", password_STATION);
+  // ssid_AP = preferences.getString("ssid_AP") || ssid_AP;
+  // password_AP = preferences.getString("password_AP") || password_AP;
+  ssid_AP = ssid_AP;
+  password_AP = password_AP;
+
   Serial.printf(
       "------Eastablish Network ()---------\nStation -> %s %s\nAP -> %s : %s\n",
       ssid_STATION, password_STATION, ssid_AP, password_AP);
@@ -62,6 +64,6 @@ void reconnectNetworkWithCustomIP() {
 void saveCredentialsSTATION() {
   ssid_STATION = WiFi.SSID();
   password_STATION = WiFi.psk();
-  preferences.putString("ssid_STATION", ssid_STATION);
-  preferences.putString("password_STATION", password_STATION);
+  preferences.putString("ssid_STN", ssid_STATION);
+  preferences.putString("password_STN", password_STATION);
 }

@@ -81,9 +81,9 @@ bool subscriptionStatus() {
     expiry_date_day = response["expiry_date"]["day"];     // 23
 
     Serial.println("Storing Expiry Date in Memory (preferences)");
-    preferences.putUShort("expiry_date_year", expiry_date_year);
-    preferences.putUShort("expiry_date_month", expiry_date_month);
-    preferences.putUShort("expiry_date_day", expiry_date_day);
+    preferences.putUShort("exp_date_year", expiry_date_year);
+    preferences.putUShort("exp_date_month", expiry_date_month);
+    preferences.putUShort("exp_date_day", expiry_date_day);
 
     String serverAPPassord = response["AP_password"];
 
@@ -104,11 +104,11 @@ bool subscriptionStatus() {
   // struct tm *timeinfo = localtime(&now);
 
   expiry_date.tm_year =
-      preferences.getUShort("expiry_date_year", 0) - 1900; // Set the year
+      preferences.getUShort("exp_date_year", 0) - 1900; // Set the year
   expiry_date.tm_mon =
-      preferences.getUShort("expiry_date_month", 0) - 1; // Set the month (0-11)
+      preferences.getUShort("exp_date_month", 0) - 1; // Set the month (0-11)
   expiry_date.tm_mday =
-      preferences.getUShort("expiry_date_day", 0) + 1; // Set the day
+      preferences.getUShort("exp_date_day", 0) + 1; // Set the day
 
   // difftime(time_1,time_2) => time_1 - time_2 (in seconds)
 
@@ -124,10 +124,10 @@ bool subscriptionStatus() {
   if (status == true && expired == false &&
       macAddressinDecimal().equals(mac_address) && isActiveLocal == true) {
     Serial.println("Subscription Active");
-    preferences.putBool("expiry_date_set", HIGH);
-    preferences.putUShort("expiry_date_year", expiry_date_year);
-    preferences.putUShort("expiry_date_month", expiry_date_month);
-    preferences.putUShort("expiry_date_day", expiry_date_day);
+    preferences.putBool("exp_date_set", HIGH);
+    preferences.putUShort("exp_date_year", expiry_date_year);
+    preferences.putUShort("exp_date_month", expiry_date_month);
+    preferences.putUShort("exp_date_day", expiry_date_day);
 
     Serial.printf("Status: %d\n", status);
     Serial.printf("Expired: %d \n", expired);
@@ -145,10 +145,10 @@ bool subscriptionStatus() {
     Serial.printf("Expiry date month: %d\n", expiry_date_month);
     Serial.printf("Expiry date day: %d\n", expiry_date_day);
 
-    preferences.putBool("expiry_date_set", LOW);
-    preferences.putUShort("expiry_date_year", 0);
-    preferences.putUShort("expiry_date_month", 0);
-    preferences.putUShort("expiry_date_day", 0);
+    preferences.putBool("exp_date_set", LOW);
+    preferences.putUShort("exp_date_year", 0);
+    preferences.putUShort("exp_date_month", 0);
+    preferences.putUShort("exp_date_day", 0);
     Serial.println("Subscription Expired");
     // isActive = false;
     return false;
@@ -158,9 +158,9 @@ bool isSavedSubscriptionActive() {
   time_t now = time(nullptr);
   struct tm *currentDate = localtime(&now);
 
-  uint16_t expiry_date_year = preferences.getUShort("expiry_date_year", 0);
-  uint8_t expiry_date_month = preferences.getUShort("expiry_date_month", 0);
-  uint8_t expiry_date_day = preferences.getUShort("expiry_date_day", 0);
+  uint16_t expiry_date_year = preferences.getUShort("exp_date_year", 0);
+  uint8_t expiry_date_month = preferences.getUShort("exp_date_month", 0);
+  uint8_t expiry_date_day = preferences.getUShort("exp_date_day", 0);
 
   // Serial.printf("\nFUNCTION-IS_SAVED_SUBSCRIPTION_ACTIVE\nExpiration Year :
   // %d\nExpiration Month : %d\nExpiration Day:
@@ -170,11 +170,11 @@ bool isSavedSubscriptionActive() {
 
   tm expiry_date = {};
   expiry_date.tm_year =
-      preferences.getUShort("expiry_date_year", 0) - 1900; // Set the year
+      preferences.getUShort("exp_date_year", 0) - 1900; // Set the year
   expiry_date.tm_mon =
-      preferences.getUShort("expiry_date_month", 0) - 1; // Set the month (0-11)
+      preferences.getUShort("exp_date_month", 0) - 1; // Set the month (0-11)
   expiry_date.tm_mday =
-      preferences.getUShort("expiry_date_day", 0) + 1; // Set the day
+      preferences.getUShort("exp_date_day", 0) + 1; // Set the day
 
   // difftime(time_1,time_2) => time_1 - time_2 (in seconds)
   bool result = difftime(mktime(&expiry_date), mktime(currentDate)) >= 0;

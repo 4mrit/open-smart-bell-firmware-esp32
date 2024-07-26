@@ -5,6 +5,7 @@ void deleteSchedule(int);
 void deleteAllSchedules();
 void saveSchedulesToEEPROM();
 void loadSchedulesFromEEPROM();
-
+void saveSchedulesToPreferences();
+void loadSchedulesFromPreferences();
 
 #endif

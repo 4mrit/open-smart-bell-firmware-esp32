@@ -1,6 +1,8 @@
+#include "SPIFFS.h"
 #include <Arduino.h>
 #include <DNSServer.h>
 #include <ESPAsyncWebServer.h>
+#include <LittleFS.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
 #include <chrono>
@@ -17,24 +19,23 @@
 #include "../lib/test/test.hpp"
 #include "../lib/timing/timing.hpp"
 #include "FS.h"
-#include "LittleFS.h"
 
 bool blink = HIGH;
 
 void listLittleFSFiles();
 
 void listLittleFSFiles() {
-  // Dir dir = LittleFS.open("/");
+  // File dir = LittleFS.open("/");
   // while (dir.next()) {
   //   Serial.print("File: ");
   //   Serial.println(dir.fileName());
   // }
-  if (!LittleFS.begin()) {
+  if (!SPIFFS.begin()) {
     Serial.println("An Error has occurred while mounting LittleFS");
     return;
   }
 
-  File root = LittleFS.open("/");
+  File root = SPIFFS.open("/");
   File file = root.openNextFile();
 
   while (file) {
@@ -54,9 +55,9 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   loadSchedulesFromEEPROM();
   startWebServer();
-  if (LittleFS.begin()) {
+  if (SPIFFS.begin()) {
     Serial.println("LittleFS initilization successful");
-    listLittleFSFiles();
+    // listLittleFSFiles();
     Serial.println("-------end-of-dir-list---------");
   }
   if (!initializeTime()) {
@@ -65,12 +66,12 @@ void setup() {
 }
 
 void loop() {
-  if (isSavedSubscriptionActive()) {
-    digitalWrite(SWITCH_PIN, switchStatus());
-  }
-
+  // if (isSavedSubscriptionActive()) {
+  //   digitalWrite(SWITCH_PIN, switchStatus());
+  // }
+  digitalWrite(SWITCH_PIN, switchStatus());
   //------------------------time sync(1day)----------------------//
-  unsigned long syncInterval = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+  unsigned long syncInterval = 24 * 60 * 60 * 1000; // 24 hours in
   static unsigned long lastSyncTime = 0;
   if ((millis() - lastSyncTime >= syncInterval) || syncronizeTime == true) {
     syncTime();
@@ -100,14 +101,14 @@ void loop() {
   }
 
   //----------------------sync Server-----------------------//
-  if (syncronizeServer == true) {
-    syncronizeServer = false;
-    bool state = subscriptionStatus();
-    if (isActive != state) {
-      // handleMessage()
-      ESP.restart();
-    }
-  }
+  // if (syncronizeServer == true) {
+  //   syncronizeServer = false;
+  //   bool state = subscriptionStatus();
+  //   if (isActive != state) {
+  //     // handleMessage()
+  //     ESP.restart();
+  //   }
+  // }
   //--------------------------------------------------------//
 
   //-----------------Wifi Setting Updated---------------//
@@ -116,14 +117,14 @@ void loop() {
     networkSettingChanged = false;
   }
 
-  if (isSavedSubscriptionActive() != isActive) {
-    Serial.printf("-----------saved : %d  , isActive : %d",
-                  isSavedSubscriptionActive(), isActive);
-    if (subscriptionStatus()) {
-      Serial.println("changes detected starting server");
-      ESP.restart();
-    }
-  }
+  // if (isSavedSubscriptionActive() != isActive) {
+  //   Serial.printf("-----------saved : %d  , isActive : %d",
+  //                 isSavedSubscriptionActive(), isActive);
+  //   if (subscriptionStatus()) {
+  //     Serial.println("changes detected starting server");
+  //     ESP.restart();
+  //   }
+  // }
   displayTime();
   digitalWrite(LED_BUILTIN, blink);
   blink = !blink;
