@@ -94,3 +94,30 @@ void loadSchedulesFromPreferences() {
 
   preferences.end();
 }
+
+void debugReadAllPreferences() {
+  Serial.println("-------READING ALL PREFERENCES DATA------------");
+
+  preferences.begin("schedules", true); // Open the preferences with a namespace
+
+  // Read and print the number of schedules
+  uint8_t debug_num_schedules = preferences.getUInt("num_schedules", 0);
+  Serial.printf("num_schedules: %d\n", debug_num_schedules);
+
+  // Read and print each schedule
+  for (int i = 0; i < debug_num_schedules; i++) {
+    Schedule tempSchedule;
+    String key = "schedule_" + String(i);
+    preferences.getBytes(key.c_str(), &tempSchedule, sizeof(Schedule));
+
+    Serial.printf("Schedule %d: hour: %d, tMinutes: %d, Duration(M): %d, "
+                  "Duration(S): %d, Deleted?: %d\n",
+                  i, tempSchedule.start_time_hour, tempSchedule.start_time_min,
+                  tempSchedule.duration_minutes, tempSchedule.duration_seconds,
+                  tempSchedule.isDeleted);
+  }
+
+  preferences.end();
+
+  Serial.println("-----------------------------------------");
+}

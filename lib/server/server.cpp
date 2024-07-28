@@ -60,7 +60,7 @@ void startWebServer_ACTIVE() {
     handleSettings_POST(request);
   });
 
-  server.on("/toogle-switch-state", HTTP_POST,
+  server.on("/toggle-switch-state", HTTP_POST,
             [](AsyncWebServerRequest *request) {
               handleToogleSwitchState_POST(request);
             });
@@ -109,7 +109,7 @@ void startWebServer_EXPIRED() {
               handleRecheckSubscription_POST(request);
             });
 
-  server.on("/toogle-switch-state", HTTP_POST,
+  server.on("/toggle-switch-state", HTTP_POST,
             [](AsyncWebServerRequest *request) {
               handleToogleSwitchState_POST(request);
             });
@@ -149,7 +149,8 @@ void handleExpiredRoot_GET(AsyncWebServerRequest *request) {
 
 void handleRoot_POST(AsyncWebServerRequest *request) {
   Serial.println("handling / post request");
-  TEST_schedules_variable_data();
+  // TEST_schedules_variable_data();
+  debugReadAllPreferences();
   String start_time = "";
   String start_time_hour = "";
   String start_time_min = "";
@@ -198,7 +199,8 @@ void handleRoot_POST(AsyncWebServerRequest *request) {
 
   num_schedules++;
   saveSchedulesToEEPROM();
-  TEST_schedules_variable_data();
+  debugReadAllPreferences();
+  // TEST_schedules_variable_data();
   request->redirect("/");
 }
 void handleDeleteSchedule_POST(AsyncWebServerRequest *request) {
@@ -370,7 +372,7 @@ String parseSettingsPage(const String &var) {
 }
 
 String parseRootPage(const String &var) {
-
+  Serial.println("Parsing Root Page");
   if (var == "EXPIRY_DATE") {
 
     String expiry_date_year = String(preferences.getUShort("exp_date_year"));
@@ -411,6 +413,7 @@ String parseRootPage(const String &var) {
       </tr>
       )";
     }
+    Serial.println("%SCHEDULE ROWS%\n" + rows);
     return rows;
   }
 

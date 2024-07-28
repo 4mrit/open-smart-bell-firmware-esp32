@@ -1,47 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-    <meta charset='UTF-8'><title>Switch Scheduler</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Switch Scheduler</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <style>
-        form{
-        display:inline;
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: var(--font-family);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .header {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .settings-btn {
+           
+            position: absolute;
+            top: 30%;
+            right: 10px;
+            transform: translateY(-10%);
+            background-color: rgba(255, 255, 255, 0);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .settings-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .expiry-date {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .form {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        input[type="time"], input[type="number"] {
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"], button {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px 0;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        input[type="submit"]:hover, button:hover {
+            background-color: #27ae60;
+            opacity: 0.9;
+        }
+
+        input[type="submit"]:active, button:active {
+            transform: scale(0.98);
+        }
+
+        .urgent {
+            background-color: var(--accent-color);
+        }
+
+        .urgent:hover {
+            background-color: #c0392b;
+        }
+
+        .delete {
+            background-color: var(--accent-color);
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .delete:hover {
+            background-color: #c0392b;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .duration-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .settings-btn {
+                padding: 6px 10px;
+            }
+
+            table th, table td {
+                padding: 8px;
+            }
+
+            input[type="time"], input[type="number"] {
+                padding: 6px;
+                font-size: 14px;
+            }
+
+            input[type="submit"], button {
+                padding: 8px 12px;
+                font-size: 14px;
+                min-height: 44px;
+                min-width: 44px;
+            }
+
+            .form {
+                padding: 15px;
+            }
+
+            .form h2 {
+                font-size: 18px;
+            }
+
+            .duration-inputs {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .settings-btn {
+                padding: 4px 8px;
+            }
+
+            table th, table td {
+                padding: 6px;
+            }
+
+            input[type="time"], input[type="number"] {
+                padding: 4px;
+                font-size: 12px;
+            }
+
+            input[type="submit"], button {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .form {
+                padding: 10px;
+            }
+
+            .button-group {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .menu-toggle.active + .button-group {
+                display: flex;
+                flex-direction: column;
+            }
         }
     </style>
-    </head>
-    <body>
-    <h1 style="margin:0px">
-        Switch Scheduler
-        <form style='display:inline' method='GET' action='/settings'>
-        <button type='submit'>⚙️ Settings</button>
+</head>
+<body>
+    <div class="header">
+        <h1>Smart Bell !!</h1>
+        <form method="GET" action="/settings">
+            <button class="settings-btn" type="submit">⚙️ Settings</button>
         </form>
-    </h1>
-    <i>( Expires on: &nbsp; %EXPIRY_DATE% )</i><br><br><br>
+    </div>
+    <div class="expiry-date">(Expires on: &nbsp; %EXPIRY_DATE%)</div>
     <table>
         <tr>
-        <th>Start Time</th>
-        <th>Duration</th>
+            <th>Start Time</th>
+            <th>Duration</th>
+            <th>Action</th>
         </tr>
-
         %SCHEDULE_ROWS%
+      
+    </table>
+    <form method="POST" class="form">
+        <h2>Add New Schedule</h2>
+        <label for="start_time">Start Time:</label>
+        <input type="time" id="start_time" name="start_time"><br><br>
+        <label for="duration_minutes">Duration:</label>
+        <div class="duration-inputs">
+            <input type="number" id="duration_minutes" name="duration_minutes" placeholder="min" min="0" max="1439">
+            <input type="number" id="duration_seconds" name="duration_seconds" placeholder="sec" min="0" max="59">
+        </div>
+        <br>
+        <input type="submit" value="Save">
+    </form>
+    <button class="menu-toggle">More</button>
+    <div class="button-group">
+        <form method="POST" action="/urgent-on" class="form">
+            <button class="urgent" name="urgent-on" type="submit">Urgent (%URGENT_TIME%s)</button>
+        </form>
+        <form method="POST" action="/delete-all-schedule" class="form">
+            <button class="delete" type="submit">Delete All Schedules</button>
+        </form>
+    </div>
 
-    </table><br><br>
-    <form method='POST'>
-        Start Time: <input type='time' name='start_time'><br><br>
-        Duration : &nbsp&nbsp
-        <input type='number' name='duration_minutes' placeholder='min' min="0" max="1439" size="5" >
-        <input type='number' name='duration_seconds' placeholder='sec' min="0" max="59" size="5" >
-        <br><br>
-        <input type='submit' value='Save'>
-    </form>
-        &nbsp;&nbsp;&nbsp;
-    <form method='POST' action='/urgent-on'>
-        <button name="urgent-on" type='submit'>Urgent (%URGENT_TIME%s)</button>
-    </form><br><br>
-    <form method='POST' action='/delete-all-schedule'>
-        <button type='submit'>Delete All Schedules</button>
-    </form>
-    </body>
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+    </script>
+</body>
 </html>

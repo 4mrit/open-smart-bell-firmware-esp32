@@ -7,5 +7,5 @@ void saveSchedulesToEEPROM();
 void loadSchedulesFromEEPROM();
 void saveSchedulesToPreferences();
 void loadSchedulesFromPreferences();
-
+void debugReadAllPreferences();
 #endif

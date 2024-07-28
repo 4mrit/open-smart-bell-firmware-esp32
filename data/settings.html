@@ -1,85 +1,166 @@
-<html>
-    <head>
-      <meta charset='UTF-8'>
-      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-      <meta http-equiv="Pragma" content="no-cache">
-      <meta http-equiv="Expires" content="0">
-      <title>⚙️ Settings</title>
-      <style>
-        form,h4 ,h1{
-          display:inline;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='UTF-8'>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ Settings</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --background-color: #f0f0f0;
+            --section-background: white;
+            --text-color: #333;
         }
-        .red{color:red;}
-        .green{color:green;}
-      </style>
-    </head>
-  <body>
-    <h1>Configuration Page  </h1><br>
 
-    <form method='GET' action="/">
-      <button type="submit"> Home </button>
-    </form>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
 
-    <form method='POST' action="/sync-server">
-      <button name="sync-server" type="submit"> Sync Server</button>
-    </form> 
-    
-    <form method='POST' action="/restart">
-      <button type="submit"> Restart </button>
-    </form>
+        h1, h3, h4 {
+            color: var(--secondary-color);
+        }
 
-    <br><br><br>
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-    <form  method='POST' action="/settings">
-      <h4> Time Syncronization :</h4> %CURRENT_TIME% <br><br>
-      <h4> Network </h4>( %WIFI_SSID% ): %WIFI_STATE% <br><br>
-      <h4> Serial No :</h4>  %MAC_ADDRESS% <br><br>
-      <h4> IP Address :</h4>  %IP[0]% . %IP[1]% . %IP[2]% .
-      <input disabled type="number" name="ip" min="10" max="250" value="%IP[3]%" style="width:4em"/>
-      <br/><br/><br>
-      <h3 id="cred_label" >Network Credentials (WiFi)</h3>
-      SSID  : <input name="ssid" style="margin-left: 25px"/><br/><br>
-      Password : <input name="password"/><br/><br/><br>
-      <button name="settings" type="submit">Save Changes</button>
-    </form>
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-    <form method='POST' action='/sync-time'>
-      <button name="sync-time" type='submit'>Sync Time</button>
-    </form>
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-    <form method='POST' action='/toogle-switch-state'>
-      <button name="toogle-switch-state" type='submit'>Toggle Switch State</button>
-    </form>
-    
+        button:hover {
+            opacity: 0.9;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .section {
+            background-color: var(--section-background);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Configuration Page</h1>
+
+    <div class="button-group">
+        <form method='GET' action="/">
+            <button type="submit">Home</button>
+        </form>
+        <form method='POST' action="/sync-server">
+            <button name="sync-server" type="submit">Sync Server</button>
+        </form> 
+        <form method='POST' action="/restart">
+            <button type="submit">Restart</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <h4>Time Synchronization:</h4> <span id="current-time">%CURRENT_TIME%</span>
+        <h4>Network:</h4> <span id="wifi-info">(%WIFI_SSID%): %WIFI_STATE%</span>
+        <h4>Serial No:</h4> <span id="mac-address">%MAC_ADDRESS%</span>
+        <h4>IP Address:</h4> <span id="ip-address">%IP[0]%.%IP[1]%.%IP[2]%.%IP[3]%</span>
+    </div>
+
+    <div class="section">
+        <form method='POST' action="/settings">
+            <h3 id="cred_label">Network Credentials (WiFi)</h3>
+            <label for="ssid">SSID:</label>
+            <input type="text" id="ssid" name="ssid"><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password"><br>
+            <button name="settings" type="submit">Save Changes</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <form method='POST' action='/sync-time'>
+            <button name="sync-time" type='submit'>Sync Time</button>
+        </form>
+        <br>
+        <form method='POST' action='/toggle-switch-state'>
+            <button name="toggle-switch-state" type='submit'>Toggle Switch State</button>
+        </form>
+    </div>
+
     <script>
-      function changeLabel(value) {
-        var label = document.getElementById('cred_label');
-        if (value === 'ap') {
-          label.innerHTML = 'Network Credentials (Hotspot)';
-          
-        } else {
-          label.innerHTML = 'Network Credentials (WiFi)';
+        function changeLabel(value) {
+            var label = document.getElementById('cred_label');
+            if (value === 'ap') {
+                label.innerHTML = 'Network Credentials (Hotspot)';
+            } else {
+                label.innerHTML = 'Network Credentials (WiFi)';
+            }
         }
-      }
-      
-      var clickCount = 0;
-      var clickTimeout;
-      document.body.addEventListener('click', handleClick);
-      document.body.addEventListener('touchstart', handleClick);
 
-      function handleClick(event) {
-          clickCount;
+        var clickCount = 0;
+        var clickTimeout;
+        document.body.addEventListener('click', handleClick);
+        document.body.addEventListener('touchstart', handleClick);
 
-          if (clickCount === 4) {
-              event.preventDefault(); 
-              alert("Made with ♡ by Amrit!!");
-              clickCount = 0; // Reset the click count
-          }
+        function handleClick(event) {
+            clickCount++;
 
-          clickTimeout = setTimeout(function() {
-              clickCount = 0; // Reset the click count
-          }, 500);
-      }
+            if (clickCount === 4) {
+                event.preventDefault(); 
+                alert("Made with ♡ by Amrit!!");
+                clickCount = 0; // Reset the click count
+            }
+
+            clearTimeout(clickTimeout);
+            clickTimeout = setTimeout(function() {
+                clickCount = 0; // Reset the click count
+            }, 500);
+        }
     </script>
-  </body>
-  </html>
+</body>
+</html>
